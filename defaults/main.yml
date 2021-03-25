@@ -31,3 +31,18 @@ docker_yum_gpg_key: "{{ docker_repo_url }}/centos/gpg"
 
 # A list of users who will be added to the docker group.
 docker_users: []
+
+docker_bip_network: "10.110.0.1/16"
+docker_log_driver: "json-file"
+docker_log_max_size: "512m"
+docker_log_max_file: "3"
+docker_storage_driver: overlay2
+
+docker_daemon:
+  log-driver: "{{ docker_log_driver }}"
+  log-opts:
+    max-size: "{{ docker_log_max_size }}"
+    max-file: "{{ docker_log_max_file }}"
+  bip: "{{ docker_bip_network }}"
+  storage-driver: "{{ docker_storage_driver }}"
+

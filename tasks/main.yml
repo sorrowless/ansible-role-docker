@@ -5,6 +5,22 @@
 - include_tasks: setup-Debian.yml
   when: ansible_os_family == 'Debian'
 
+- name: Creating /etc/docker
+  file:
+    name: /etc/docker
+    owner: root
+    group: root
+    mode: 0644
+    state: directory
+
+- name: Create daemon.json
+  template:
+    src: etc/docker/daemon.json.j2
+    dest: /etc/docker/daemon.json
+    owner: root
+    group: root
+    mode: 0644
+
 - name: Install Docker.
   package:
     name: "{{ docker_package }}"
