@@ -46,3 +46,9 @@ docker_daemon:
   bip: "{{ docker_bip_network }}"
   storage-driver: "{{ docker_storage_driver }}"
 
+docker_additional_networks: []
+  #- name: prometheus_network
+  #  bridge_name: prom_bridge  # this one has to be less than 15 symbols
+  #  subnet: 10.10.10.0/24
+  #  gateway: 10.10.10.1
+  #  iprange: 10.10.10.128/25
