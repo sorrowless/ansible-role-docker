@@ -43,7 +43,6 @@
   when: docker_users | length > 0
 
 - include_tasks: docker-networks.yml
-  loop:
-    - "{{ docker_additional_networks }}"
+  loop: "{{ docker_additional_networks }}"
   loop_control:
     loop_var: network
