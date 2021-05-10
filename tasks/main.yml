@@ -13,6 +13,16 @@
     mode: 0644
     state: directory
 
+- name: docker_daemon_syslog | Override default daemon with syslog_opts
+  set_fact:
+    docker_daemon_syslog: "{{ docker_daemon_common | combine(docker_daemon_syslog, recursive=True) }}"
+  tags: always
+
+- name: docker_daemon_json | Override default daemon with fson_opts
+  set_fact:
+    docker_daemon_json: "{{ docker_daemon_common | combine(docker_daemon_json, recursive=True) }}"
+  tags: always
+
 - name: Create daemon.json
   template:
     src: etc/docker/daemon.json.j2

@@ -45,24 +45,24 @@ docker_cert: "{{ docker_cert_dir }}/cert.d/{{ ansible_default_ipv4.address }}.pe
 docker_key: "{{ docker_cert_dir }}/key.d/{{ ansible_default_ipv4.address }}.pem"
 docker_log_tag: "{{ '{{' }}.DaemonName}}/{{ '{{' }}.Name}}/{{ '{{' }}.ID}}"
 
-docker_daemon:
+docker_daemon_common:
   log-driver: "{{ docker_log_driver }}"
-  log-opts:
-    max-size: "{{ docker_log_max_size }}"
-    max-file: "{{ docker_log_max_file }}"
+  log-opts: {}
   bip: "{{ docker_bip_network }}"
   storage-driver: "{{ docker_storage_driver }}"
 
+docker_daemon_json:
+  log-opts:
+    max-size: "{{ docker_log_max_size }}"
+    max-file: "{{ docker_log_max_file }}"
+
 docker_daemon_syslog:
-  log-driver: "{{ docker_log_driver }}"
   log-opts:
     syslog-address: "{{ docker_log_address }}"
     syslog-tls-ca-cert: "{{ docker_ca_cert }}"
     syslog-tls-cert: "{{ docker_cert }}"
     syslog-tls-key: "{{ docker_key }}"
     tag: "{{ docker_log_tag }}"
-  bip: "{{ docker_bip_network }}"
-  storage-driver: "{{ docker_storage_driver }}"
 
 docker_additional_networks: []
   #- name: prometheus_network
