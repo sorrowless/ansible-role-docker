@@ -1,2 +1,6 @@
 #jinja2: lstrip_blocks: "True", trim_blocks: "True"
+{% if  docker_log_driver == "syslog" %}
+{{ docker_daemon_syslog | to_nice_json(indent=2) }}
+{% else %}
 {{ docker_daemon | to_nice_json(indent=2) }}
+{% endif %}
