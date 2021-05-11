@@ -43,7 +43,7 @@ docker_log_address: "tcp+tls://192.168.1.11:6514"
 docker_ca_cert: "{{ docker_cert_dir }}/ca.d/cacert.pem"
 docker_cert: "{{ docker_cert_dir }}/cert.d/{{ ansible_default_ipv4.address }}.pem"
 docker_key: "{{ docker_cert_dir }}/key.d/{{ ansible_default_ipv4.address }}.pem"
-docker_log_tag: "{{ '{{' }}.DaemonName}}/{{ '{{' }}.Name}}/{{ '{{' }}.ID}}"
+docker_log_tag: !unsafe '{{.DaemonName}}/{{.Name}}/{{.ID}}'
 
 docker_daemon_common:
   log-driver: "{{ docker_log_driver }}"
