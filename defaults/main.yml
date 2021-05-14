@@ -32,19 +32,37 @@ docker_yum_gpg_key: "{{ docker_repo_url }}/centos/gpg"
 # A list of users who will be added to the docker group.
 docker_users: []
 
-docker_bip_network: "10.110.0.1/16"
 docker_log_driver: "json-file"
+docker_bip_network: "10.110.0.1/16"
 docker_log_max_size: "512m"
 docker_log_max_file: "3"
 docker_storage_driver: overlay2
 
-docker_daemon:
+docker_cert_dir: "/etc/ssl_certs/{{ ansible_hostname }}"
+docker_log_address: "tcp+tls://192.168.1.11:6514"
+docker_ca_cert: "{{ docker_cert_dir }}/ca.d/cacert.pem"
+docker_cert: "{{ docker_cert_dir }}/cert.d/{{ ansible_default_ipv4.address }}.pem"
+docker_key: "{{ docker_cert_dir }}/key.d/{{ ansible_default_ipv4.address }}.pem"
+docker_log_tag: !unsafe '{{.DaemonName}}/{{.Name}}/{{.ID}}'
+
+docker_daemon_common:
   log-driver: "{{ docker_log_driver }}"
+  log-opts: {}
+  bip: "{{ docker_bip_network }}"
+  storage-driver: "{{ docker_storage_driver }}"
+
+docker_daemon_json:
   log-opts:
     max-size: "{{ docker_log_max_size }}"
     max-file: "{{ docker_log_max_file }}"
-  bip: "{{ docker_bip_network }}"
-  storage-driver: "{{ docker_storage_driver }}"
+
+docker_daemon_syslog:
+  log-opts:
+    syslog-address: "{{ docker_log_address }}"
+    syslog-tls-ca-cert: "{{ docker_ca_cert }}"
+    syslog-tls-cert: "{{ docker_cert }}"
+    syslog-tls-key: "{{ docker_key }}"
+    tag: "{{ docker_log_tag }}"
 
 docker_additional_networks: []
   #- name: prometheus_network
