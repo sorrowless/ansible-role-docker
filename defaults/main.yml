@@ -37,6 +37,7 @@ docker_bip_network: "10.110.0.1/16"
 docker_log_max_size: "512m"
 docker_log_max_file: "3"
 docker_storage_driver: overlay2
+docker_data_root: "/var/lib/docker"
 
 docker_cert_dir: "/etc/ssl_certs/{{ ansible_hostname }}"
 docker_log_address: "tcp+tls://192.168.1.11:6514"
@@ -50,6 +51,7 @@ docker_daemon_common:
   log-opts: {}
   bip: "{{ docker_bip_network }}"
   storage-driver: "{{ docker_storage_driver }}"
+  data-root: "{{ docker_data_root }}"
 
 docker_daemon_json:
   log-opts:
