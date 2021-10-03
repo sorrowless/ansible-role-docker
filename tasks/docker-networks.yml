@@ -5,7 +5,7 @@
     driver_options:
       # Have to be 15 symbols or less
       com.docker.network.bridge.name: "{{ network.bridge_name }}"
-    ipam_options:
-      subnet: '{{ network.subnet }}'
-      gateway: '{{ network.gateway }}'
-      iprange: '{{ network.iprange }}'
+    ipam_config:
+      - subnet: '{{ network.subnet }}'
+        gateway: '{{ network.gateway }}'
+        iprange: '{{ network.iprange }}'
