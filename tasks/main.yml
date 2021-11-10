@@ -15,13 +15,13 @@
 
 - name: docker_daemon | Override default daemon with syslog_opts
   set_fact:
-    docker_daemon: "{{ docker_daemon_common | combine(docker_daemon_syslog, recursive=True) }}"
+    docker_daemon: "{{ docker_daemon | combine(docker_daemon_syslog, recursive=True) }}"
   tags: always
   when: docker_log_driver == "syslog"
 
 - name: docker_daemon | Override default daemon with json_opts
   set_fact:
-    docker_daemon: "{{ docker_daemon_common | combine(docker_daemon_json, recursive=True) }}"
+    docker_daemon: "{{ docker_daemon | combine(docker_daemon_json, recursive=True) }}"
   tags: always
   when: docker_log_driver == "json-file"
 

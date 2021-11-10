@@ -47,7 +47,7 @@ docker_cert: "{{ docker_cert_dir }}/cert.d/{{ ansible_default_ipv4.address }}.pe
 docker_key: "{{ docker_cert_dir }}/key.d/{{ ansible_default_ipv4.address }}.pem"
 docker_log_tag: !unsafe '{{.DaemonName}}/{{.Name}}/{{.ID}}'
 
-docker_daemon_common:
+docker_daemon:
   log-driver: "{{ docker_log_driver }}"
   log-opts: {}
   bip: "{{ docker_bip_network }}"
@@ -66,8 +66,6 @@ docker_daemon_syslog:
     syslog-tls-cert: "{{ docker_cert }}"
     syslog-tls-key: "{{ docker_key }}"
     tag: "{{ docker_log_tag }}"
-
-docker_daemon: "{{ docker_daemon_common }}"
 
 docker_additional_networks: []
   #- name: prometheus_network
