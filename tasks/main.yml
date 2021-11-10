@@ -13,6 +13,11 @@
     mode: 0644
     state: directory
 
+- name: docker_daemon | Override default daemon with json_opts
+  set_fact:
+    docker_daemon: "{{ docker_daemon_common }}"
+  tags: always
+
 - name: docker_daemon | Override default daemon with syslog_opts
   set_fact:
     docker_daemon: "{{ docker_daemon_common | combine(docker_daemon_syslog, recursive=True) }}"
