@@ -47,7 +47,7 @@ docker_cert: "{{ docker_cert_dir }}/cert.d/{{ ansible_default_ipv4.address }}.pe
 docker_key: "{{ docker_cert_dir }}/key.d/{{ ansible_default_ipv4.address }}.pem"
 docker_log_tag: !unsafe '{{.DaemonName}}/{{.Name}}/{{.ID}}'
 
-docker_daemon_common:
+docker_daemon:
   log-driver: "{{ docker_log_driver }}"
   log-opts: {}
   bip: "{{ docker_bip_network }}"
