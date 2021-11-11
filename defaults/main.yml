@@ -46,6 +46,7 @@ docker_ca_cert: "{{ docker_cert_dir }}/ca.d/cacert.pem"
 docker_cert: "{{ docker_cert_dir }}/cert.d/{{ ansible_default_ipv4.address }}.pem"
 docker_key: "{{ docker_cert_dir }}/key.d/{{ ansible_default_ipv4.address }}.pem"
 docker_log_tag: !unsafe '{{.DaemonName}}/{{.Name}}/{{.ID}}'
+docker_live_restore: True
 
 docker_daemon:
   log-driver: "{{ docker_log_driver }}"
@@ -53,7 +54,7 @@ docker_daemon:
   bip: "{{ docker_bip_network }}"
   storage-driver: "{{ docker_storage_driver }}"
   data-root: "{{ docker_data_root }}"
-  live-restore: true
+  live-restore: "{{ docker_live_restore }}"
 
 docker_daemon_json:
   log-opts:
