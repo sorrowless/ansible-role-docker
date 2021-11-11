@@ -53,6 +53,7 @@ docker_daemon:
   bip: "{{ docker_bip_network }}"
   storage-driver: "{{ docker_storage_driver }}"
   data-root: "{{ docker_data_root }}"
+  live-restore: true
 
 docker_daemon_json:
   log-opts:
