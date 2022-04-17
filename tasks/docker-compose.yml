@@ -26,6 +26,32 @@
   when:
     - docker_install_compose_from_source
 
+- name: Install docker-compose from pip
+  block:
+    - name: Delete existing docker-compose installed from sources
+      file:
+        path: "{{ docker_compose_path }}"
+        state: absent
+
+    - name: Delete default docker-compose package
+      package:
+        name: "docker-compose"
+        state: absent
+
+    - name: Install newer version of pip itself
+      pip:
+        name: "pip"
+        state: latest
+        executable: pip3
+
+    - name: Install Docker Compose from pip
+      pip:
+        name: "docker-compose"
+        state: present
+        executable: pip3
+  when:
+    - docker_install_compose_from_pip
+
 - name: Install docker-compose from packages
   block:
     - name: Delete existing docker-compose installed from sources
@@ -39,3 +65,4 @@
         state: present
   when:
     - not docker_install_compose_from_source
+    - not docker_install_compose_from_pip
