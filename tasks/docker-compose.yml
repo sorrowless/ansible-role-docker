@@ -38,6 +38,11 @@
         name: "docker-compose"
         state: absent
 
+    - name: Ensure pip installation
+      package:
+        name: "python3-pip"
+        state: present
+
     - name: Install newer version of pip itself
       pip:
         name: "pip"
