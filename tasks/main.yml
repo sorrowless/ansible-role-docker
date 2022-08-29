@@ -9,7 +9,8 @@
   group:
     name: docker
     state: present
-    gid: 998
+    gid: "{{ docker_group_id }}"
+  when: docker_service_group == true
 
 - name: Creating /etc/docker
   file:
