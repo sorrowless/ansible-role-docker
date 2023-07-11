@@ -1,10 +1,12 @@
 ---
 # Edition can be one of: 'ce' (Community Edition) or 'ee' (Enterprise Edition).
+# You can define version of docker by variable docker_version, for example: '=5:23.0.2-1~ubuntu.20.04~focal'
 docker_edition: 'ce'
+docker_version: ''
 docker_packages:
-  - "docker-{{ docker_edition }}"
-  - "docker-{{ docker_edition }}-cli"
-  - "docker-{{ docker_edition }}-rootless-extras"
+  - "docker-{{ docker_edition }}{{ docker_version }}"
+  - "docker-{{ docker_edition }}-cli{{ docker_version}}"
+  - "docker-{{ docker_edition }}-rootless-extras{{ docker_version}}"
   - "containerd.io"
 docker_packages_state: present
 
