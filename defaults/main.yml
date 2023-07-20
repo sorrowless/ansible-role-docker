@@ -96,3 +96,12 @@ docker_additional_networks: []
 
 # Docker daemon options as a dict
 docker_daemon_options: {}
+
+# Docker swarm variables
+# You can set any interface, that is listened by docker engine.
+# e.g. docker_swarm_interface: "eth1"
+docker_swarm_interface: "{{ ansible_default_ipv4['interface'] }}"
+docker_swarm_addr: "{{ hostvars[inventory_hostname]['ansible_' + docker_swarm_interface]['ipv4']['address'] }}"
+docker_swarm_port: 2377
+docker_swarm_default_addr_pool_mask_length: 16
+docker_swarm_default_addr_pool: "10.0.0.0/8"

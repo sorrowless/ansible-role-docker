@@ -130,3 +130,8 @@
   loop: "{{ docker_additional_networks }}"
   loop_control:
     loop_var: network
+
+- import_tasks: docker-swarm.yml
+  tags:
+    - swarm
+  when: inventory_hostname in groups['docker_swarm_nodes']

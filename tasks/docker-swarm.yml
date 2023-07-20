@@ -1,0 +1,48 @@
+---
+- name: Init a new swarm
+  community.docker.docker_swarm:
+    listen_addr: "{{ docker_swarm_addr }}:{{ docker_swarm_port }}"
+    advertise_addr: "{{ docker_swarm_addr }}"
+    subnet_size: "{{ docker_swarm_default_addr_pool_mask_length }}"
+    default_addr_pool: "{{ docker_swarm_default_addr_pool }}"
+  when: inventory_hostname == groups['docker_swarm_managers'][0]
+
+- name: Get the join-tokens.
+  community.docker.docker_swarm:
+  register: docker_info
+  delegate_to: "{{ groups['docker_swarm_managers'][0] }}"
+  when: inventory_hostname != groups['docker_swarm_managers'][0]
+
+- name: Declare the address of the first Swarm manager as a fact.
+  set_fact:
+    docker_manager_address: "{{ docker_swarm_addr }}:{{ docker_swarm_port }}"
+  when: "inventory_hostname == groups['docker_swarm_managers'][0]"
+
+- name: Distribute the fact containing address of the first Swarm manager.
+  set_fact:
+    docker_manager_address: "{{ hostvars[groups['docker_swarm_managers'][0]]['docker_manager_address'] }}"
+  when: "inventory_hostname != groups['docker_swarm_managers'][0]"
+
+- name: Join the pending Swarm worker nodes.
+  community.docker.docker_swarm:
+    state: join
+    listen_addr: "{{ docker_swarm_addr }}:{{ docker_swarm_port }}"
+    advertise_addr: "{{ docker_swarm_addr }}"
+    subnet_size: "{{ docker_swarm_default_addr_pool_mask_length }}"
+    default_addr_pool: "{{ docker_swarm_default_addr_pool }}"
+    join_token: "{{ docker_info.swarm_facts.JoinTokens.Worker }}"
+    remote_addrs: "{{ docker_manager_address }}"
+  when: "'docker_swarm_workers' in group_names
+    and 'docker_swarm_managers' not in group_names"
+
+- name: Join the pending Swarm manager nodes.
+  community.docker.docker_swarm:
+    state: join
+    listen_addr: "{{ docker_swarm_addr }}:{{ docker_swarm_port }}"
+    advertise_addr: "{{ docker_swarm_addr }}"
+    subnet_size: "{{ docker_swarm_default_addr_pool_mask_length }}"
+    default_addr_pool: "{{ docker_swarm_default_addr_pool }}"
+    join_token: "{{ docker_info.swarm_facts.JoinTokens.Manager }}"
+    remote_addrs: "{{ docker_manager_address }}"
+  when: "'docker_swarm_managers' in group_names
+    and inventory_hostname != groups['docker_swarm_managers'][0]"
