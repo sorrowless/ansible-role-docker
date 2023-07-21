@@ -3,7 +3,7 @@
   community.docker.docker_swarm:
     listen_addr: "{{ docker_swarm_addr }}:{{ docker_swarm_port }}"
     advertise_addr: "{{ docker_swarm_addr }}"
-    subnet_size: "{{ docker_swarm_default_addr_pool_mask_length }}"
+    subnet_size: "{{ docker_swarm_mask_length }}"
     default_addr_pool: "{{ docker_swarm_default_addr_pool }}"
   when: inventory_hostname == groups['docker_swarm_managers'][0]
 
@@ -28,7 +28,7 @@
     state: join
     listen_addr: "{{ docker_swarm_addr }}:{{ docker_swarm_port }}"
     advertise_addr: "{{ docker_swarm_addr }}"
-    subnet_size: "{{ docker_swarm_default_addr_pool_mask_length }}"
+    subnet_size: "{{ docker_swarm_mask_length }}"
     default_addr_pool: "{{ docker_swarm_default_addr_pool }}"
     join_token: "{{ docker_info.swarm_facts.JoinTokens.Worker }}"
     remote_addrs: "{{ docker_manager_address }}"
@@ -40,7 +40,7 @@
     state: join
     listen_addr: "{{ docker_swarm_addr }}:{{ docker_swarm_port }}"
     advertise_addr: "{{ docker_swarm_addr }}"
-    subnet_size: "{{ docker_swarm_default_addr_pool_mask_length }}"
+    subnet_size: "{{ docker_swarm_mask_length }}"
     default_addr_pool: "{{ docker_swarm_default_addr_pool }}"
     join_token: "{{ docker_info.swarm_facts.JoinTokens.Manager }}"
     remote_addrs: "{{ docker_manager_address }}"
