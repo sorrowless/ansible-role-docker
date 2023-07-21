@@ -46,3 +46,11 @@
     remote_addrs: "{{ docker_manager_address }}"
   when: "'docker_swarm_managers' in group_names
     and inventory_hostname != groups['docker_swarm_managers'][0]"
+
+- name: Replace node labels with new ones
+  community.docker.docker_node:
+    hostname: "{{ ansible_hostname }}"
+    labels: "{{ docker_swarm_node_labels }}"
+    labels_state: replace
+  delegate_to: "{{ groups['docker_swarm_managers'][0] }}"
+  when: "'docker_swarm_workers' in group_names"

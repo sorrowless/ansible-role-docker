@@ -131,6 +131,14 @@
   loop_control:
     loop_var: network
 
+- name: Check limit
+  debug:
+    msg: You should add "{{ groups['docker_swarm_managers'][0] }}" to limit
+  failed_when: True
+  when: "groups['docker_swarm_managers'][0] not in ansible_play_batch"
+  tags:
+    - swarm
+
 - import_tasks: docker-swarm.yml
   tags:
     - swarm
