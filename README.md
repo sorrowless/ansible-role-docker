@@ -103,13 +103,7 @@ Many users of this role wish to also use Ansible to then _build_ Docker images a
     - geerlingguy.docker
 ```
 
-For configure swarm you should add variable `docker_swarm_manager: True` to managers and add the next group in inventory file:
-
-```ini
-[docker_swarm_nodes]
-docker_swarm_node1
-docker_swarm_node2
-```
+For configure swarm you should add variable `docker_swarm_configure: True` for all nodes, and `docker_swarm_manager: True` for managers.
 
 ## Dependencies
 

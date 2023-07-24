@@ -131,7 +131,26 @@
   loop_control:
     loop_var: network
 
+- name: Set list of swarm nodes
+  set_fact:
+    docker_swarm_nodes_list: "{{ docker_swarm_nodes_list | default ([]) + [item] }}"
+  loop: "{{ ansible_play_batch }}"
+  run_once: True
+  when:
+    - hostvars[item].docker_swarm_configure is defined
+    - hostvars[item].docker_swarm_configure
+  tags:
+    - swarm
+
 - import_tasks: docker-swarm.yml
   tags:
     - swarm
-  when: inventory_hostname in groups['docker_swarm_nodes']
+  when: docker_swarm_configure
+
+- name: Delete swarm
+  community.docker.docker_swarm:
+    state: absent
+    force: true
+  tags:
+    - never
+    - delete
