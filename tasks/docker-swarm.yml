@@ -4,12 +4,16 @@
   ignore_errors: true
   register: docker_swarm_info
 
+- debug:
+    var: docker_swarm_info
+
 - name: Check if swarm is already configured
   set_fact:
-    swarm_configured: "{{ hostvars[item].docker_swarm_info.docker_swarm_active }}"
+    swarm_is_configured: "{{ hostvars[item].docker_swarm_info.docker_swarm_active }}"
   loop: "{{ ansible_play_batch }}"
   run_once: True
-  when: not swarm_configured | default (false)
+  when:
+    - not swarm_is_configured | default (false)
 
 - name: Find manager
   set_fact:
@@ -18,7 +22,11 @@
   run_once: True
   when:
     - hostvars[item].docker_swarm_manager is defined and hostvars[item].docker_swarm_manager
-    - hostvars[item].docker_swarm_info.docker_swarm_manager or not swarm_configured
+    - hostvars[item].docker_swarm_info.docker_swarm_manager is defined or not swarm_is_configured
+
+- debug:
+    msg: stop
+  failed_when: true
 
 - name: Check limit if there's a manager
   debug:

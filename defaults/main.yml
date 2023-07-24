@@ -108,3 +108,4 @@ docker_swarm_default_addr_pool: "10.0.0.0/8"
 docker_swarm_node_labels: {}
 docker_swarm_manager: false
 docker_swarm_availability: active
+docker_swarm_configure: false
