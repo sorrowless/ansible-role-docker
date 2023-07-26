@@ -103,6 +103,8 @@ Many users of this role wish to also use Ansible to then _build_ Docker images a
     - geerlingguy.docker
 ```
 
+For configure swarm you should add variable `docker_swarm_configure: True` for all nodes, and `docker_swarm_manager: True` for managers.
+
 ## Dependencies
 
 None.

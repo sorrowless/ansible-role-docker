@@ -1,0 +1,105 @@
+---
+- name: Get info on Docker Swarm
+  community.docker.docker_swarm_info:
+  ignore_errors: true
+  register: docker_swarm_info
+
+- name: Check if swarm is already configured
+  set_fact:
+    swarm_is_configured: "{{ hostvars[item].docker_swarm_info.docker_swarm_active }}"
+  loop: "{{ docker_swarm_nodes_list }}"
+  run_once: True
+  when:
+    - not swarm_is_configured | default (false)
+
+- name: Find manager
+  set_fact:
+    swarm_manager_hostname: "{{ hostvars[item].inventory_hostname }}"
+  loop: "{{ docker_swarm_nodes_list }}"
+  run_once: True
+  when:
+    - hostvars[item].docker_swarm_manager is defined and hostvars[item].docker_swarm_manager
+    - hostvars[item].docker_swarm_info.docker_swarm_manager is defined or not swarm_is_configured
+
+- name: Check limit if there's a manager
+  debug:
+    msg: For configuring the sworm you should add any manager to limit
+  run_once: True
+  failed_when: True
+  when: swarm_manager_hostname is not defined
+
+- name: Init a new swarm
+  community.docker.docker_swarm:
+    listen_addr: "{{ docker_swarm_addr }}:{{ docker_swarm_port }}"
+    advertise_addr: "{{ docker_swarm_addr }}"
+    subnet_size: "{{ docker_swarm_mask_length }}"
+    default_addr_pool: "{{ docker_swarm_default_addr_pool }}"
+  when: inventory_hostname == swarm_manager_hostname
+
+- name: Get the join-tokens.
+  community.docker.docker_swarm:
+  register: docker_info
+  delegate_to: "{{ swarm_manager_hostname }}"
+
+- name: Declare the address of the first Swarm manager as a fact.
+  set_fact:
+    docker_manager_address: "{{ docker_swarm_addr }}:{{ docker_swarm_port }}"
+  when: "inventory_hostname == swarm_manager_hostname"
+
+- name: Distribute the fact containing address of the first Swarm manager.
+  set_fact:
+    docker_manager_address: "{{ hostvars[swarm_manager_hostname]['docker_manager_address'] }}"
+  when: "inventory_hostname != swarm_manager_hostname"
+
+- name: Join the pending Swarm worker nodes.
+  community.docker.docker_swarm:
+    state: join
+    listen_addr: "{{ docker_swarm_addr }}:{{ docker_swarm_port }}"
+    advertise_addr: "{{ docker_swarm_addr }}"
+    subnet_size: "{{ docker_swarm_mask_length }}"
+    default_addr_pool: "{{ docker_swarm_default_addr_pool }}"
+    join_token: "{{ docker_info.swarm_facts.JoinTokens.Worker }}"
+    remote_addrs: "{{ docker_manager_address }}"
+  when:
+    - not docker_swarm_info.docker_swarm_active
+    - not docker_swarm_manager
+
+- name: Join the pending Swarm manager nodes.
+  community.docker.docker_swarm:
+    state: join
+    listen_addr: "{{ docker_swarm_addr }}:{{ docker_swarm_port }}"
+    advertise_addr: "{{ docker_swarm_addr }}"
+    subnet_size: "{{ docker_swarm_mask_length }}"
+    default_addr_pool: "{{ docker_swarm_default_addr_pool }}"
+    join_token: "{{ docker_info.swarm_facts.JoinTokens.Manager }}"
+    remote_addrs: "{{ docker_manager_address }}"
+  when: 
+    - not docker_swarm_info.docker_swarm_active
+    - docker_swarm_manager
+
+- name: Promote nodes
+  community.docker.docker_node:
+    hostname: "{{ inventory_hostname }}"
+    role: manager
+  delegate_to: "{{ swarm_manager_hostname }}"
+  when: docker_swarm_manager
+
+- name: Demote nodes
+  community.docker.docker_node:
+    hostname: "{{ inventory_hostname }}"
+    role: worker
+  delegate_to: "{{ swarm_manager_hostname }}"
+  when: not docker_swarm_manager
+
+- name: Set availability to nodes
+  community.docker.docker_node:
+    hostname: "{{ inventory_hostname }}"
+    availability: "{{ docker_swarm_availability }}"
+  delegate_to: "{{ swarm_manager_hostname }}"
+
+- name: Replace node labels with new ones
+  community.docker.docker_node:
+    hostname: "{{ ansible_hostname }}"
+    labels: "{{ docker_swarm_node_labels }}"
+    labels_state: replace
+  delegate_to: "{{ swarm_manager_hostname }}"
