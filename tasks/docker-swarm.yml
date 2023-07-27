@@ -79,21 +79,21 @@
 
 - name: Promote nodes
   community.docker.docker_node:
-    hostname: "{{ inventory_hostname }}"
+    hostname: "{{ ansible_hostname }}"
     role: manager
   delegate_to: "{{ swarm_manager_hostname }}"
   when: docker_swarm_manager
 
 - name: Demote nodes
   community.docker.docker_node:
-    hostname: "{{ inventory_hostname }}"
+    hostname: "{{ ansible_hostname }}"
     role: worker
   delegate_to: "{{ swarm_manager_hostname }}"
   when: not docker_swarm_manager
 
 - name: Set availability to nodes
   community.docker.docker_node:
-    hostname: "{{ inventory_hostname }}"
+    hostname: "{{ ansible_hostname }}"
     availability: "{{ docker_swarm_availability }}"
   delegate_to: "{{ swarm_manager_hostname }}"
 
