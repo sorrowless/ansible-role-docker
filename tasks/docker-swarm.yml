@@ -19,7 +19,7 @@
   run_once: True
   when:
     - hostvars[item].docker_swarm_manager is defined and hostvars[item].docker_swarm_manager
-    - hostvars[item].docker_swarm_info.docker_swarm_manager is defined or not swarm_is_configured
+    - hostvars[item].docker_swarm_info.docker_swarm_manager or not swarm_is_configured
 
 - name: Check limit if there's a manager
   debug:
@@ -79,21 +79,21 @@
 
 - name: Promote nodes
   community.docker.docker_node:
-    hostname: "{{ inventory_hostname }}"
+    hostname: "{{ ansible_hostname }}"
     role: manager
   delegate_to: "{{ swarm_manager_hostname }}"
   when: docker_swarm_manager
 
 - name: Demote nodes
   community.docker.docker_node:
-    hostname: "{{ inventory_hostname }}"
+    hostname: "{{ ansible_hostname }}"
     role: worker
   delegate_to: "{{ swarm_manager_hostname }}"
   when: not docker_swarm_manager
 
 - name: Set availability to nodes
   community.docker.docker_node:
-    hostname: "{{ inventory_hostname }}"
+    hostname: "{{ ansible_hostname }}"
     availability: "{{ docker_swarm_availability }}"
   delegate_to: "{{ swarm_manager_hostname }}"
 
