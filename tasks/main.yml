@@ -126,10 +126,15 @@
 - include_tasks: docker-users.yml
   when: at_least_one_user_to_modify is defined
 
-- include_tasks: docker-networks.yml
+- include_tasks:
+    file: docker-networks.yml
+    apply:
+      tags: 
+        - network_config
   loop: "{{ docker_additional_networks }}"
   loop_control:
     loop_var: network
+  tags: network_config
 
 - name: Set list of swarm nodes
   set_fact:

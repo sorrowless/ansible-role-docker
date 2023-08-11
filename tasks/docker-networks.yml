@@ -2,6 +2,8 @@
 - name: Configure network ranges for docker hosts
   docker_network:
     name: "{{ network.name }}"
+    driver: "{{ network.driver }}"
+    attachable: "{{ network.attachable }}"
     driver_options:
       # Have to be 15 symbols or less
       com.docker.network.bridge.name: "{{ network.bridge_name }}"
