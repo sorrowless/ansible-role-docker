@@ -1,6 +1,7 @@
 ---
 - name: Get info on Docker Swarm
   community.docker.docker_swarm_info:
+    nodes: yes
   ignore_errors: true
   register: docker_swarm_info
 
@@ -27,6 +28,15 @@
   run_once: True
   failed_when: True
   when: swarm_manager_hostname is not defined
+
+- name: Remove down nodes
+  community.docker.docker_swarm:
+    state: remove
+    node_id: "{{ item.ID }}"
+  loop: "{{ docker_swarm_info.nodes }}"
+  when:
+    - inventory_hostname == swarm_manager_hostname
+    - item.Status == "down"
 
 - name: Init a new swarm
   community.docker.docker_swarm:
