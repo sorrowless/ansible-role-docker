@@ -4,6 +4,8 @@
     nodes: yes
   ignore_errors: true
   register: docker_swarm_info
+  tags:
+    - clear_stack
 
 - name: Check if swarm is already configured
   set_fact:
@@ -21,6 +23,8 @@
   when:
     - hostvars[item].docker_swarm_manager is defined and hostvars[item].docker_swarm_manager
     - hostvars[item].docker_swarm_info.docker_swarm_manager or not swarm_is_configured
+  tags:
+    - clear_stack
 
 - name: Check limit if there's a manager
   debug:
@@ -37,6 +41,18 @@
   when:
     - inventory_hostname == swarm_manager_hostname
     - item.Status == "down"
+  tags:
+    - clear_stack
+    - never
+
+- name: Remove nodes from swarm cluster
+  community.docker.docker_swarm:
+    state: remove
+    node_id: "{{ item.ID }}"
+  loop: "{{ docker_swarm_info.nodes }}"
+  when:
+    - inventory_hostname == swarm_manager_hostname
+    - item.Hostname not in docker_swarm_nodes_list
 
 - name: Init a new swarm
   community.docker.docker_swarm:
