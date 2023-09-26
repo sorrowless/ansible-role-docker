@@ -146,6 +146,15 @@
     - hostvars[item].docker_swarm_configure
   tags:
     - swarm
+    - clear_stack
+
+- name: Leave swarm for a node
+  community.docker.docker_swarm:
+    state: absent
+    force: true
+  when: not docker_swarm_configure
+  tags:
+    - swarm
 
 - import_tasks: docker-swarm.yml
   tags:
