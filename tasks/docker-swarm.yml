@@ -33,6 +33,20 @@
   failed_when: True
   when: swarm_manager_hostname is not defined
 
+- name: Init a new swarm
+  community.docker.docker_swarm:
+    listen_addr: "{{ docker_swarm_addr }}:{{ docker_swarm_port }}"
+    advertise_addr: "{{ docker_swarm_addr }}"
+    subnet_size: "{{ docker_swarm_mask_length }}"
+    default_addr_pool: "{{ docker_swarm_default_addr_pool }}"
+  when: inventory_hostname == swarm_manager_hostname
+
+- name: Get info on Docker Swarm
+  community.docker.docker_swarm_info:
+    nodes: yes
+  ignore_errors: true
+  register: docker_swarm_info
+
 - name: Remove down nodes
   community.docker.docker_swarm:
     state: remove
@@ -53,14 +67,6 @@
   when:
     - inventory_hostname == swarm_manager_hostname
     - item.Hostname not in docker_swarm_nodes_list
-
-- name: Init a new swarm
-  community.docker.docker_swarm:
-    listen_addr: "{{ docker_swarm_addr }}:{{ docker_swarm_port }}"
-    advertise_addr: "{{ docker_swarm_addr }}"
-    subnet_size: "{{ docker_swarm_mask_length }}"
-    default_addr_pool: "{{ docker_swarm_default_addr_pool }}"
-  when: inventory_hostname == swarm_manager_hostname
 
 - name: Get the join-tokens.
   community.docker.docker_swarm:
