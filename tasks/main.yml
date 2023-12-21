@@ -136,6 +136,18 @@
     loop_var: network
   tags: network_config
 
+- name: Log into registry
+  community.docker.docker_login:
+    registry_url: "{{ docker_registry_url }}"
+    username: "{{ docker_registry_user }}"
+    password: "{{ docker_registry_password }}"
+  when:
+    - docker_registry_url is defined
+    - docker_registry_user is defined
+    - docker_registry_password is defined
+  tags:
+    - login
+
 - name: Set list of swarm nodes
   set_fact:
     docker_swarm_nodes_list: "{{ docker_swarm_nodes_list | default ([]) + [item] }}"
