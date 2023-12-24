@@ -126,16 +126,6 @@
 - include_tasks: docker-users.yml
   when: at_least_one_user_to_modify is defined
 
-- include_tasks:
-    file: docker-networks.yml
-    apply:
-      tags: 
-        - network_config
-  loop: "{{ docker_additional_networks }}"
-  loop_control:
-    loop_var: network
-  tags: network_config
-
 - name: Log into registry
   community.docker.docker_login:
     registry_url: "{{ docker_registry_url }}"
@@ -172,6 +162,16 @@
   tags:
     - swarm
   when: docker_swarm_configure
+
+- include_tasks:
+    file: docker-networks.yml
+    apply:
+      tags: 
+        - network_config
+  loop: "{{ docker_additional_networks }}"
+  loop_control:
+    loop_var: network
+  tags: network_config
 
 - name: Delete swarm
   community.docker.docker_swarm:
