@@ -27,7 +27,7 @@ The `docker_edition` should be either `ce` (Community Edition) or `ee` (Enterpri
 You can also specify a specific version of Docker to install using the variable "docker_version": 
 docker_version: '=5:23.0.2-1~ubuntu.20.04~focal' 
 
-You can control whether the package is installed, uninstalled, or at the latest version by setting `docker_package_state` to `present`, `absent`, or `latest`, respectively. Note that the Docker daemon will be automatically restarted if the Docker package is updated. This is a side effect of flushing all handlers (running any of the handlers that have been notified by this and any other role up to this point in the play).
+You can control whether the package is installed, uninstalled, or at the latest version by setting `docker_packages_state` to `present`, `absent`, or `latest`, respectively. Note that the Docker daemon will be automatically restarted if the Docker package is updated. This is a side effect of flushing all handlers (running any of the handlers that have been notified by this and any other role up to this point in the play).
 
     docker_service_manage: true
     docker_service_state: started
@@ -49,6 +49,10 @@ Docker Compose Plugin installation options. These differ from the below in that 
 
 Docker Compose installation options.
 
+    docker_add_repo: true
+
+Controls whether this role will add the official Docker repository. Set to `false` if you want to use the default docker packages for your system or manage the package repository on your own.
+
     docker_repo_url: https://download.docker.com/linux
 
 The main Docker repo URL, common between Debian and RHEL systems.
@@ -58,11 +62,12 @@ The main Docker repo URL, common between Debian and RHEL systems.
     docker_apt_repository: "deb [arch={{ docker_apt_arch }}] {{ docker_repo_url }}/{{ ansible_distribution | lower }} {{ ansible_distribution_release }} {{ docker_apt_release_channel }}"
     docker_apt_ignore_key_error: True
     docker_apt_gpg_key: "{{ docker_repo_url }}/{{ ansible_distribution | lower }}/gpg"
+    docker_apt_filename: "docker"
 
 (Used only for Debian/Ubuntu.) You can switch the channel to `nightly` if you want to use the Nightly release.
 
 You can change `docker_apt_gpg_key` to a different url if you are behind a firewall or provide a trustworthy mirror.
-Usually in combination with changing `docker_apt_repository` as well.
+Usually in combination with changing `docker_apt_repository` as well. `docker_apt_filename` controls the name of the source list file created in `sources.list.d`. If you are upgrading from an older (<7.0.0) version of this role, you should change this to the name of the existing file (e.g. `download_docker_com_linux_debian` on Debian) to avoid conflicting lists.
 
     docker_yum_repo_url: "{{ docker_repo_url }}/{{ (ansible_distribution == 'Fedora') | ternary('fedora','centos') }}/docker-{{ docker_edition }}.repo"docker_edition }}.repo
     docker_yum_repo_enable_nightly: '0'
@@ -125,6 +130,12 @@ None.
 ## License
 
 MIT / BSD
+
+## Sponsors
+
+* [We Manage](https://we-manage.de): Helping start-ups and grown-ups scaling their infrastructure in a sustainable way.
+
+The above sponsor(s) are supporting Jeff Geerling on [GitHub Sponsors](https://github.com/sponsors/geerlingguy). You can sponsor Jeff's work too, to help him continue improving these Ansible open source projects!
 
 ## Author Information
 
