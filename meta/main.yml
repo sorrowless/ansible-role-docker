@@ -6,12 +6,8 @@ galaxy_info:
   author: geerlingguy, sorrowless
   description: Docker for Linux.
   license: "license (BSD, MIT)"
-  min_ansible_version: 2.4
+  min_ansible_version: 2.10
   platforms:
-    - name: EL
-      versions:
-        - 7
-        - 8
     - name: Fedora
       versions:
         - all
@@ -19,6 +15,7 @@ galaxy_info:
       versions:
         - buster
         - bullseye
+        - bookworm
     - name: Ubuntu
       versions:
         - bionic
