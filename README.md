@@ -60,7 +60,7 @@ The main Docker repo URL, common between Debian and RHEL systems.
     docker_apt_release_channel: stable
     docker_apt_arch: "{{ 'arm64' if ansible_architecture == 'aarch64' else 'amd64' }}"
     docker_apt_repository: "deb [arch={{ docker_apt_arch }}] {{ docker_repo_url }}/{{ ansible_distribution | lower }} {{ ansible_distribution_release }} {{ docker_apt_release_channel }}"
-    docker_apt_ignore_key_error: True
+    docker_apt_ignore_key_error: true
     docker_apt_gpg_key: "{{ docker_repo_url }}/{{ ansible_distribution | lower }}/gpg"
     docker_apt_filename: "docker"
 
@@ -113,7 +113,7 @@ Many users of this role wish to also use Ansible to then _build_ Docker images a
     - geerlingguy.docker
 ```
 
-For configure swarm you should add variable `docker_swarm_configure: True` for all nodes, and `docker_swarm_manager: True` for managers. `inventory_hostname` must be equal to hostname (`ansible_hostname`) for correct remove nodes.
+For configure swarm you should add variable `docker_swarm_configure: true` for all nodes, and `docker_swarm_manager: true` for managers. `inventory_hostname` must be equal to hostname (`ansible_hostname`) for correct remove nodes.
 
 ## Dependencies
 

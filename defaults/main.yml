@@ -44,7 +44,10 @@ docker_apt_release_channel: stable
 # and is only necessary until Docker officially supports them.
 docker_apt_ansible_distribution: "{{ 'ubuntu' if ansible_distribution in ['Pop!_OS', 'Linux Mint'] else ansible_distribution }}"
 docker_apt_arch: "{{ 'arm64' if ansible_architecture == 'aarch64' else 'amd64' }}"
-docker_apt_repository: "deb [arch={{ docker_apt_arch }} signed-by=/etc/apt/trusted.gpg.d/docker.asc] {{ docker_repo_url }}/{{ docker_apt_ansible_distribution | lower }} {{ ansible_distribution_release }} {{ docker_apt_release_channel }}"
+docker_apt_repository:
+  "deb [arch={{ docker_apt_arch }} signed-by=/etc/apt/trusted.gpg.d/docker.asc]
+  {{ docker_repo_url }}/{{ docker_apt_ansible_distribution | lower }}
+  {{ ansible_distribution_release }} {{ docker_apt_release_channel }}"
 docker_apt_ignore_key_error: true
 docker_apt_gpg_key: "{{ docker_repo_url }}/{{ docker_apt_ansible_distribution | lower }}/gpg"
 docker_apt_gpg_key_checksum: "sha256:1500c1f56fa9e26b9b8f42452a553675796ade0807cdce11975eb98170b3a570"
@@ -72,7 +75,7 @@ docker_ca_cert: "{{ docker_cert_dir }}/ca.d/cacert.pem"
 docker_cert: "{{ docker_cert_dir }}/cert.d/{{ ansible_default_ipv4.address }}.pem"
 docker_key: "{{ docker_cert_dir }}/key.d/{{ ansible_default_ipv4.address }}.pem"
 docker_log_tag: !unsafe '{{.DaemonName}}/{{.Name}}/{{.ID}}'
-docker_live_restore: True
+docker_live_restore: true
 
 docker_daemon:
   log-driver: "{{ docker_log_driver }}"
@@ -96,13 +99,13 @@ docker_daemon_syslog:
     tag: "{{ docker_log_tag }}"
 
 docker_additional_networks: []
-  #- name: prometheus_network
-  #  bridge_name: prom_bridge  # this one has to be less than 15 symbols
-  #  driver: "bridge"
-  #  attachable: false
-  #  subnet: 10.10.10.0/24
-  #  gateway: 10.10.10.1
-  #  iprange: 10.10.10.128/25
+#   - name: prometheus_network
+#    bridge_name: prom_bridge  # this one has to be less than 15 symbols
+#    driver: "bridge"
+#    attachable: false
+#    subnet: 10.10.10.0/24
+#    gateway: 10.10.10.1
+#    iprange: 10.10.10.128/25
 
 # Docker daemon options as a dict
 docker_daemon_options: {}

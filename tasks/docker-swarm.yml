@@ -1,7 +1,7 @@
 ---
 - name: Get info on Docker Swarm
   community.docker.docker_swarm_info:
-    nodes: yes
+    nodes: true
   ignore_errors: true
   register: docker_swarm_info
   tags:
@@ -11,7 +11,7 @@
   set_fact:
     swarm_is_configured: "{{ hostvars[item].docker_swarm_info.docker_swarm_active }}"
   loop: "{{ docker_swarm_nodes_list }}"
-  run_once: True
+  run_once: true
   when:
     - not swarm_is_configured | default (false)
 
@@ -19,7 +19,7 @@
   set_fact:
     swarm_manager_hostname: "{{ hostvars[item].inventory_hostname }}"
   loop: "{{ docker_swarm_nodes_list }}"
-  run_once: True
+  run_once: true
   when:
     - hostvars[item].docker_swarm_manager is defined and hostvars[item].docker_swarm_manager
     - hostvars[item].docker_swarm_info.docker_swarm_manager or not swarm_is_configured
@@ -29,8 +29,8 @@
 - name: Check limit if there's a manager
   debug:
     msg: For configuring the sworm you should add any manager to limit
-  run_once: True
-  failed_when: True
+  run_once: true
+  failed_when: true
   when: swarm_manager_hostname is not defined
 
 - name: Init a new swarm
@@ -43,7 +43,7 @@
 
 - name: Get info on Docker Swarm
   community.docker.docker_swarm_info:
-    nodes: yes
+    nodes: true
   ignore_errors: true
   register: docker_swarm_info
 
@@ -105,7 +105,7 @@
     default_addr_pool: "{{ docker_swarm_default_addr_pool }}"
     join_token: "{{ docker_info.swarm_facts.JoinTokens.Manager }}"
     remote_addrs: "{{ docker_manager_address }}"
-  when: 
+  when:
     - not docker_swarm_info.docker_swarm_active
     - docker_swarm_manager
 

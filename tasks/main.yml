@@ -142,7 +142,7 @@
   set_fact:
     docker_swarm_nodes_list: "{{ docker_swarm_nodes_list | default ([]) + [item] }}"
   loop: "{{ ansible_play_batch }}"
-  run_once: True
+  run_once: true
   when:
     - hostvars[item].docker_swarm_configure is defined
     - hostvars[item].docker_swarm_configure
@@ -166,7 +166,7 @@
 - include_tasks:
     file: docker-networks.yml
     apply:
-      tags: 
+      tags:
         - network_config
   loop: "{{ docker_additional_networks }}"
   loop_control:
