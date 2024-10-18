@@ -19,6 +19,10 @@ docker_service_enabled: true
 docker_restart_handler_state: restarted
 docker_service_group: false
 docker_group_id: 998
+docker_remote_port_open: false
+docker_interface_remote: 0.0.0.0
+docker_remote_port: 2375
+docker_service_file_name: /lib/systemd/system/docker.service
 
 # Docker Compose Plugin options.
 docker_install_compose_plugin: false

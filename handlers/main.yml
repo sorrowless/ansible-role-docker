@@ -1,4 +1,9 @@
 ---
+- name: daemon reload
+  systemd:
+    daemon_reload: yes
+  when: docker_service_manage | bool
+
 - name: restart docker
   service:
     name: docker

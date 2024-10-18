@@ -94,6 +94,18 @@
   when: docker_daemon_options.keys() | length > 0
   notify: restart docker
 
+- name: Change remote port in service
+  ini_file:
+    dest: "{{ docker_service_file_name }}"
+    section: Service
+    option: ExecStart
+    value: /usr/bin/dockerd -H fd:// {%if docker_remote_port_open | bool%}-H tcp://{{ docker_interface_remote }}:{{ docker_remote_port }}{%endif%} --containerd=/run/containerd/containerd.sock
+  when:
+    - docker_service_manage | bool
+  notify:
+    - daemon reload
+    - restart docker
+
 - name: Ensure Docker is started and enabled at boot.
   service:
     name: docker
