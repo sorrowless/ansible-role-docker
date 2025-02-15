@@ -113,7 +113,7 @@ Many users of this role wish to also use Ansible to then _build_ Docker images a
     - geerlingguy.docker
 ```
 
-For configure swarm you should add variable `docker_swarm_configure: true` for all nodes, and `docker_swarm_manager: true` for managers. `inventory_hostname` must be equal to hostname (`ansible_hostname`) for correct remove nodes.
+For configure swarm you should add variable `docker_swarm_configure: true` for all nodes, and `docker_swarm_manager: true` for managers. `inventory_hostname` must be equal to hostname (`ansible_nodename`) for correct remove nodes.
 
 ## Dependencies
 
