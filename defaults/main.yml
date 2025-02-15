@@ -73,7 +73,7 @@ docker_log_max_file: "3"
 docker_storage_driver: overlay2
 docker_data_root: "/var/lib/docker"
 
-docker_cert_dir: "/etc/ssl_certs/{{ ansible_hostname }}"
+docker_cert_dir: "/etc/ssl_certs/{{ ansible_nodename }}"
 docker_log_address: "tcp+tls://192.168.1.11:6514"
 docker_ca_cert: "{{ docker_cert_dir }}/ca.d/cacert.pem"
 docker_cert: "{{ docker_cert_dir }}/cert.d/{{ ansible_default_ipv4.address }}.pem"
@@ -101,6 +101,10 @@ docker_daemon_syslog:
     syslog-tls-cert: "{{ docker_cert }}"
     syslog-tls-key: "{{ docker_key }}"
     tag: "{{ docker_log_tag }}"
+
+disable_networks:
+  - test
+  - dev
 
 docker_additional_networks: []
 #   - name: prometheus_network

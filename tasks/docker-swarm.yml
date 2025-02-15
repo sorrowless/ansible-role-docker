@@ -111,14 +111,14 @@
 
 - name: Promote nodes
   community.docker.docker_node:
-    hostname: "{{ ansible_hostname }}"
+    hostname: "{{ ansible_nodename }}"
     role: manager
   delegate_to: "{{ swarm_manager_hostname }}"
   when: docker_swarm_manager
 
 - name: Demote nodes
   community.docker.docker_node:
-    hostname: "{{ ansible_hostname }}"
+    hostname: "{{ ansible_nodename }}"
     role: worker
   delegate_to: "{{ swarm_manager_hostname }}"
   when: not docker_swarm_manager
@@ -145,13 +145,13 @@
 
 - name: Set availability to nodes
   community.docker.docker_node:
-    hostname: "{{ ansible_hostname }}"
+    hostname: "{{ ansible_nodename }}"
     availability: "{{ docker_swarm_availability }}"
   delegate_to: "{{ swarm_manager_hostname }}"
 
 - name: Replace node labels with new ones
   community.docker.docker_node:
-    hostname: "{{ ansible_hostname }}"
+    hostname: "{{ ansible_nodename }}"
     labels: "{{ docker_swarm_node_labels }}"
     labels_state: replace
   delegate_to: "{{ swarm_manager_hostname }}"
