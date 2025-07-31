@@ -33,11 +33,11 @@
       or (docker_compose_current_version is version((docker_compose_version | regex_replace('v', '')), '<'))
     - ansible_os_family != 'Astra Linux'
 
-- name: Ensure additional dependencies are installed (on Ubuntu < 20.04 and any other systems).
+- name: Install Docker Compose on Astra Linux
   apt:
     name: docker-compose
     state: present
-  when: ansible_os_family != 'Astra Linux'
+  when: ansible_os_family == 'Astra Linux'
   register: result
   until: result is succeeded
   retries: 3
