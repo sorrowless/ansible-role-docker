@@ -1,0 +1,12 @@
+---
+- name: Ensure dependencies are installed.
+  apt:
+    name:
+      - apt-transport-https
+      - ca-certificates
+      - python3-docker
+    state: present
+  register: result
+  until: result is succeeded
+  retries: 3
+  delay: 3
