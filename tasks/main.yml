@@ -4,8 +4,8 @@
   vars:
     params:
       files:
-        - '{{ansible_distribution}}.yml'
-        - '{{ansible_os_family}}.yml'
+        - "{{ ansible_distribution | replace (' ', '') }}.yml"
+        - "{{ ansible_os_family | replace (' ', '') }}.yml"
         - main.yml
       paths:
         - 'vars'
@@ -16,7 +16,7 @@
 - include_tasks: setup-Debian.yml
   when: ansible_os_family == 'Debian'
 
-- include_tasks: "setup-Astra Linux.yml"
+- include_tasks: "setup-AstraLinux.yml"
   when: ansible_os_family == 'Astra Linux'
 
 - name: Ensure group "docker" exists with correct gid
