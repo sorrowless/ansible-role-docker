@@ -1,2 +1,11 @@
 ---
-docker_packages: "docker.io"
+docker_apt_repository: deb [signed-by=/etc/apt/trusted.gpg.d/docker.asc] https://download.docker.com/linux/debian buster stable
+docker_apt_gpg_key: https://download.docker.com/linux/debian/gpg
+docker_packages:
+  - "docker-{{ docker_edition }}{{ docker_version }}"
+  - "docker-{{ docker_edition }}-cli{{ docker_version}}"
+  - "docker-{{ docker_edition }}-rootless-extras{{ docker_version}}"
+  - "containerd.io"
+  - "docker-buildx-plugin"
+  - "docker-compose"
+  - "python3-yaml"

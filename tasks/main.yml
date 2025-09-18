@@ -16,7 +16,7 @@
 - include_tasks: setup-Debian.yml
   when: ansible_os_family == 'Debian'
 
-- include_tasks: "setup-AstraLinux.yml"
+- include_tasks: "setup-Debian.yml"
   when: ansible_os_family == 'Astra Linux'
 
 - name: Ensure group "docker" exists with correct gid
@@ -105,7 +105,6 @@
     value: /usr/bin/dockerd -H fd:// {%if docker_remote_port_open | bool%}-H tcp://{{ docker_interface_remote }}:{{ docker_remote_port }}{%endif%} --containerd=/run/containerd/containerd.sock
   when:
     - docker_service_manage | bool
-    - ansible_os_family != 'Astra Linux'
   notify:
     - daemon reload
     - restart docker
