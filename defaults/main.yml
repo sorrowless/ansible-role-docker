@@ -32,7 +32,7 @@ docker_compose_package_state: present
 # Docker Compose options.
 docker_install_compose: false
 docker_compose_version: "v2.11.1"
-docker_compose_arch: "{{ ansible_architecture }}"
+docker_compose_arch: "{{ ansible_facts['architecture'] }}"
 docker_compose_url: "https://github.com/docker/compose/releases/download/{{ docker_compose_version }}/docker-compose-linux-{{ docker_compose_arch }}"
 docker_compose_path: /usr/local/bin/docker-compose
 
@@ -46,19 +46,19 @@ docker_add_repo: true
 docker_apt_release_channel: stable
 # docker_apt_ansible_distribution is a workaround for Ubuntu variants which can't be identified as such by Ansible,
 # and is only necessary until Docker officially supports them.
-docker_apt_ansible_distribution: "{{ 'ubuntu' if ansible_distribution in ['Pop!_OS', 'Linux Mint'] else ansible_distribution }}"
-docker_apt_arch: "{{ 'arm64' if ansible_architecture == 'aarch64' else 'amd64' }}"
+docker_apt_ansible_distribution: "{{ 'ubuntu' if ansible_facts['distribution'] in ['Pop!_OS', 'Linux Mint'] else ansible_facts['distribution'] }}"
+docker_apt_arch: "{{ 'arm64' if ansible_facts['architecture'] == 'aarch64' else 'amd64' }}"
 docker_apt_repository:
   "deb [arch={{ docker_apt_arch }} signed-by=/etc/apt/trusted.gpg.d/docker.asc]
   {{ docker_repo_url }}/{{ docker_apt_ansible_distribution | lower }}
-  {{ ansible_distribution_release }} {{ docker_apt_release_channel }}"
+  {{ ansible_facts['distribution_release'] }} {{ docker_apt_release_channel }}"
 docker_apt_ignore_key_error: true
 docker_apt_gpg_key: "{{ docker_repo_url }}/{{ docker_apt_ansible_distribution | lower }}/gpg"
 docker_apt_gpg_key_checksum: "sha256:1500c1f56fa9e26b9b8f42452a553675796ade0807cdce11975eb98170b3a570"
 docker_apt_filename: "docker"
 
 # Used only for RedHat/CentOS/Fedora.
-docker_yum_repo_url: "{{ docker_repo_url }}/{{ (ansible_distribution == 'Fedora') | ternary('fedora','centos') }}/docker-{{ docker_edition }}.repo"
+docker_yum_repo_url: "{{ docker_repo_url }}/{{ (ansible_facts['distribution'] == 'Fedora') | ternary('fedora','centos') }}/docker-{{ docker_edition }}.repo"
 docker_yum_repo_enable_nightly: '0'
 docker_yum_repo_enable_test: '0'
 docker_yum_gpg_key: "{{ docker_repo_url }}/centos/gpg"
@@ -73,11 +73,11 @@ docker_log_max_file: "3"
 docker_storage_driver: overlay2
 docker_data_root: "/var/lib/docker"
 
-docker_cert_dir: "/etc/ssl_certs/{{ ansible_nodename }}"
+docker_cert_dir: "/etc/ssl_certs/{{ ansible_facts['nodename'] }}"
 docker_log_address: "tcp+tls://192.168.1.11:6514"
 docker_ca_cert: "{{ docker_cert_dir }}/ca.d/cacert.pem"
-docker_cert: "{{ docker_cert_dir }}/cert.d/{{ ansible_default_ipv4.address }}.pem"
-docker_key: "{{ docker_cert_dir }}/key.d/{{ ansible_default_ipv4.address }}.pem"
+docker_cert: "{{ docker_cert_dir }}/cert.d/{{ ansible_facts['default_ipv4']['address'] }}.pem"
+docker_key: "{{ docker_cert_dir }}/key.d/{{ ansible_facts['default_ipv4']['address'] }}.pem"
 docker_log_tag: !unsafe '{{.DaemonName}}/{{.Name}}/{{.ID}}'
 docker_live_restore: true
 
@@ -117,8 +117,8 @@ docker_daemon_options: {}
 # Docker swarm variables
 # You can set any interface, that is listened by docker engine.
 # e.g. docker_swarm_interface: "eth1"
-docker_swarm_interface: "{{ ansible_default_ipv4['interface'] }}"
-docker_swarm_addr: "{{ hostvars[inventory_hostname]['ansible_' + docker_swarm_interface]['ipv4']['address'] }}"
+docker_swarm_interface: "{{ ansible_facts['default_ipv4']['interface'] }}"
+docker_swarm_addr: "{{ ansible_facts[docker_swarm_interface]['ipv4']['address'] }}"
 docker_swarm_port: 2377
 docker_swarm_mask_length: 16
 docker_swarm_default_addr_pool: "10.0.0.0/8"

@@ -111,14 +111,14 @@
 
 - name: Promote nodes
   community.docker.docker_node:
-    hostname: "{{ ansible_nodename }}"
+    hostname: "{{ ansible_facts['nodename'] }}"
     role: manager
   delegate_to: "{{ swarm_manager_hostname }}"
   when: docker_swarm_manager
 
 - name: Demote nodes
   community.docker.docker_node:
-    hostname: "{{ ansible_nodename }}"
+    hostname: "{{ ansible_facts['nodename'] }}"
     role: worker
   delegate_to: "{{ swarm_manager_hostname }}"
   when: not docker_swarm_manager
@@ -143,8 +143,8 @@
         executable: pip3
   when:
     - docker_swarm_manager
-    - ansible_distribution == "ubuntu"
-    - ansible_distribution_major_version != 24
+    - ansible_facts["distribution"] == "ubuntu"
+    - ansible_facts["distribution_major_version"] | int != 24
 
 - name: Ensure jsondiff
   package:
@@ -152,18 +152,18 @@
     state: present
   when:
     - docker_swarm_manager
-    - ansible_distribution == "ubuntu"
-    - ansible_distribution_major_version == 24
+    - ansible_facts["distribution"] == "ubuntu"
+    - ansible_facts["distribution_major_version"] | int == 24
 
 - name: Set availability to nodes
   community.docker.docker_node:
-    hostname: "{{ ansible_nodename }}"
+    hostname: "{{ ansible_facts['nodename'] }}"
     availability: "{{ docker_swarm_availability }}"
   delegate_to: "{{ swarm_manager_hostname }}"
 
 - name: Replace node labels with new ones
   community.docker.docker_node:
-    hostname: "{{ ansible_nodename }}"
+    hostname: "{{ ansible_facts['nodename'] }}"
     labels: "{{ docker_swarm_node_labels }}"
     labels_state: replace
   delegate_to: "{{ swarm_manager_hostname }}"
