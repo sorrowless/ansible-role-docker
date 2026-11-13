@@ -6,6 +6,7 @@
   register: docker_swarm_info
   tags:
     - clear_stack
+    - swarm
 
 - name: Check if swarm is already configured
   set_fact:
@@ -14,6 +15,8 @@
   run_once: true
   when:
     - not swarm_is_configured | default (false)
+  tags:
+    - swarm
 
 - name: Find manager
   set_fact:
@@ -25,6 +28,7 @@
     - hostvars[item].docker_swarm_info.docker_swarm_manager or not swarm_is_configured
   tags:
     - clear_stack
+    - swarm
 
 - name: Check limit if there's a manager
   debug:
@@ -32,6 +36,8 @@
   run_once: true
   failed_when: true
   when: swarm_manager_hostname is not defined
+  tags:
+    - swarm
 
 - name: Init a new swarm
   community.docker.docker_swarm:
@@ -40,12 +46,16 @@
     subnet_size: "{{ docker_swarm_mask_length }}"
     default_addr_pool: "{{ docker_swarm_default_addr_pool }}"
   when: inventory_hostname == swarm_manager_hostname
+  tags:
+    - swarm
 
 - name: Get info on Docker Swarm
   community.docker.docker_swarm_info:
     nodes: true
   ignore_errors: true
   register: docker_swarm_info
+  tags:
+    - swarm
 
 - name: Remove down nodes
   community.docker.docker_swarm:
@@ -58,6 +68,7 @@
   tags:
     - clear_stack
     - never
+    - swarm
 
 - name: Remove nodes from swarm cluster
   community.docker.docker_swarm:
@@ -67,21 +78,29 @@
   when:
     - inventory_hostname == swarm_manager_hostname
     - item.Hostname not in docker_swarm_nodes_list
+  tags:
+    - swarm
 
 - name: Get the join-tokens.
   community.docker.docker_swarm:
   register: docker_info
   delegate_to: "{{ swarm_manager_hostname }}"
+  tags:
+    - swarm
 
 - name: Declare the address of the first Swarm manager as a fact.
   set_fact:
     docker_manager_address: "{{ docker_swarm_addr }}:{{ docker_swarm_port }}"
   when: "inventory_hostname == swarm_manager_hostname"
+  tags:
+    - swarm
 
 - name: Distribute the fact containing address of the first Swarm manager.
   set_fact:
     docker_manager_address: "{{ hostvars[swarm_manager_hostname]['docker_manager_address'] }}"
   when: "inventory_hostname != swarm_manager_hostname"
+  tags:
+    - swarm
 
 - name: Join the pending Swarm worker nodes.
   community.docker.docker_swarm:
@@ -95,6 +114,8 @@
   when:
     - not docker_swarm_info.docker_swarm_active
     - not docker_swarm_manager
+  tags:
+    - swarm
 
 - name: Join the pending Swarm manager nodes.
   community.docker.docker_swarm:
@@ -108,6 +129,8 @@
   when:
     - not docker_swarm_info.docker_swarm_active
     - docker_swarm_manager
+  tags:
+    - swarm
 
 - name: Promote nodes
   community.docker.docker_node:
@@ -115,6 +138,8 @@
     role: manager
   delegate_to: "{{ swarm_manager_hostname }}"
   when: docker_swarm_manager
+  tags:
+    - swarm
 
 - name: Demote nodes
   community.docker.docker_node:
@@ -122,11 +147,15 @@
     role: worker
   delegate_to: "{{ swarm_manager_hostname }}"
   when: not docker_swarm_manager
+  tags:
+    - swarm
 
 - name: Ensure pip installation
   package:
     name: "python3-pip"
     state: present
+  tags:
+    - swarm
 
 - name: Ensure jsondiff
   block:
@@ -145,6 +174,8 @@
     - docker_swarm_manager
     - ansible_facts["distribution"] == "ubuntu"
     - ansible_facts["distribution_major_version"] | int != 24
+  tags:
+    - swarm
 
 - name: Ensure jsondiff
   package:
@@ -154,12 +185,16 @@
     - docker_swarm_manager
     - ansible_facts["distribution"] == "ubuntu"
     - ansible_facts["distribution_major_version"] | int == 24
+  tags:
+    - swarm
 
 - name: Set availability to nodes
   community.docker.docker_node:
     hostname: "{{ ansible_facts['nodename'] }}"
     availability: "{{ docker_swarm_availability }}"
   delegate_to: "{{ swarm_manager_hostname }}"
+  tags:
+    - swarm
 
 - name: Replace node labels with new ones
   community.docker.docker_node:
@@ -167,3 +202,5 @@
     labels: "{{ docker_swarm_node_labels }}"
     labels_state: replace
   delegate_to: "{{ swarm_manager_hostname }}"
+  tags:
+    - swarm

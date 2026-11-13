@@ -173,7 +173,7 @@
   tags:
     - swarm
 
-- import_tasks: docker-swarm.yml
+- include_tasks: docker-swarm.yml
   tags:
     - swarm
   when: docker_swarm_configure
